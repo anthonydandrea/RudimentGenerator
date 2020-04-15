@@ -35,17 +35,27 @@ class Generator:
 
         return notes
 
+
     def _get_articulation(self, prev_note):
         return self._get_probablistic_from_arr(self.weights["articulation"])
 
+
     def _get_special(self, prev_note):
-        return self._get_probablistic_from_arr(self.weights["special"])
+        val = self._get_probablistic_from_arr(self.weights["special"])
+
+        # cannot play cheese/flam after cheese/diddle, try again
+        if prev_note and prev_note.special in (NoteEnum.DIDDLE, NoteEnum.CHEESE) and val in (NoteEnum.FLAM, NoteEnum.CHEESE):
+                return self._get_special(prev_note)
+
+        return val
+        
 
     def _get_sticking(self, prev_note):
         if prev_note and prev_note.special in (NoteEnum.DIDDLE, NoteEnum.CHEESE):
             return NoteEnum.LEFT if prev_note.sticking == NoteEnum.RIGHT else NoteEnum.RIGHT
-            
+
         return self._get_probablistic_from_arr(self.weights["sticking"])
+
 
     def _get_probablistic_from_arr(self, arr):
         rand = rd.random()
