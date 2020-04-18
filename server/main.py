@@ -1,11 +1,23 @@
 import inflect
 inf = inflect.engine()
 
+import argparse
 import json
 import random as rd
 
 from generator import Generator
 from note_enum import NoteEnum
+
+parser = argparse.ArgumentParser(description='Generate a drum rudiment')
+parser.add_argument('--numBeats', help='sum the integers (default: find the max)')
+
+args = parser.parse_args()
+# print(args.numBeats)
+NUM_BEATS = None
+try:
+    NUM_BEATS = int(args.numBeats)
+except:
+    NUM_BEATS = 1
 
 adjs = None
 with open("adjectives.json") as json_file:
@@ -65,7 +77,7 @@ for i in (NoteEnum.TAP, NoteEnum.ACCENT):
 g = Generator()
 music_staff = ""
 
-for beat in g.get_n_beats(1):
+for beat in g.get_n_beats(NUM_BEATS):
     num_notes = len(beat)
     is_odd_rhythm = num_notes % 2 == 1
 
