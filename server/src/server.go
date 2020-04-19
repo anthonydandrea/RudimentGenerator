@@ -7,6 +7,7 @@ import (
         "net/http"
         "math/rand"
         "strconv"
+        "os"
 )
 
 type RudimentOptions struct {
@@ -64,5 +65,12 @@ func getRudiment(w http.ResponseWriter, r *http.Request) {
 func main() {
         http.Handle("/", http.FileServer(http.Dir("./static")))
         http.HandleFunc("/rudiment", getRudiment)
-        http.ListenAndServe(":3001", nil)
+
+        port, exists := os.LookupEnv("PORT")
+        if exists {
+                http.ListenAndServe(":"+port, nil)
+           } else {
+                http.ListenAndServe(":3001", nil)
+           }
+        
 }
