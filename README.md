@@ -1,13 +1,6 @@
-# RudimentGenerator
+# RudimentGenerator - rudimentgenerator.com
 
-## Dependencies 
-Inflect (inside requirements.txt)
+RudimentGenerator will generate randomized music for snare drum. Different rhythms and combinations are probabilistically selected in such a way that is a playable for a drummer.
 
-Lilypond (https://lilypond.org/download.html)
 
-## Usage
-```
-python main.py > rudiment.ly && lilypond rudiment.ly
-```
 
-You should now have a ```rudiment.pdf``` in the directory containing your rudiment.
