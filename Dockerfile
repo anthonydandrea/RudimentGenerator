@@ -8,6 +8,7 @@ RUN go install -v ./...
 
 RUN apt-get update && apt-get install -y \
     vim \
+    cron \
     python3 \
     python3-pip \
     lilypond && \
@@ -15,4 +16,13 @@ RUN apt-get update && apt-get install -y \
     alias python=python3
 
 
-CMD ["go","run","server/src/server.go"]
+# Create the log file to be able to run tail
+RUN touch /var/log/cron.log
+
+# Setup cron job
+RUN (crontab -l ; echo "0 */6 * * * rm static/rudiments/ >> /var/log/cron.log") | crontab
+
+ADD docker_start.sh /
+RUN chmod +x /docker_start.sh
+
+CMD ["./docker_start.sh"]

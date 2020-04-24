@@ -11,11 +11,23 @@ import (
 )
 
 type RudimentOptions struct {
-	numBeats int
+	beats   int
+	accents int
+	rights  int
+	buzzes  int
+	diddles int
+	flams   int
+	cheeses int
 }
 
 func getRudimentOptionsCLIString(options RudimentOptions) string {
-	return "--numBeats " + strconv.Itoa(options.numBeats)
+	return " --beats " + strconv.Itoa(options.beats) +
+		" --accents " + strconv.Itoa(options.accents) +
+		" --rights " + strconv.Itoa(options.rights) +
+		" --buzzes " + strconv.Itoa(options.buzzes) +
+		" --diddles " + strconv.Itoa(options.diddles) +
+		" --flams " + strconv.Itoa(options.flams) +
+		" --cheeses " + strconv.Itoa(options.cheeses)
 }
 
 func getRudiment(w http.ResponseWriter, r *http.Request) {
@@ -32,12 +44,32 @@ func getRudiment(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("%s: %s\n", k, v)
 		switch k {
 		case "beats":
-			options.numBeats, err = strconv.Atoi(v[0])
+			options.beats, err = strconv.Atoi(v[0])
+			fmt.Println(err)
+		case "accents":
+			options.accents, err = strconv.Atoi(v[0])
+			fmt.Println(err)
+		case "rights":
+			options.rights, err = strconv.Atoi(v[0])
+			fmt.Println(err)
+		case "buzzes":
+			options.buzzes, err = strconv.Atoi(v[0])
+			fmt.Println(err)
+		case "diddles":
+			options.diddles, err = strconv.Atoi(v[0])
+			fmt.Println(err)
+		case "flams":
+			options.flams, err = strconv.Atoi(v[0])
+			fmt.Println(err)
+		case "cheeses":
+			options.cheeses, err = strconv.Atoi(v[0])
 			fmt.Println(err)
 		case "oldFileName":
 			fileToDelete = v[0]
 		}
 	}
+
+	fmt.Println(options)
 
 	fileprefix := fmt.Sprintf("%f", rand.Float64())
 	fileoptions := getRudimentOptionsCLIString(options)

@@ -18,12 +18,15 @@ import Flam from "./icons/flam.png";
 import Cheese from "./icons/cheese.png";
 
 const styles = {
+  numBeatsTextField: {
+    width: 200,
+  },
   icon: {
     width: 40,
     height: 40,
   },
   generateButton: {
-    margin: 30,
+    margin: 25,
   },
   horizontalSliderRoot: {
     width: 150,
@@ -71,6 +74,7 @@ class Controls extends React.Component {
       <React.Fragment>
         <FormControl error={this.state.numBeatsError}>
           <TextField
+            className={classes.numBeatsTextField}
             id="outlined-basic"
             label="Number of Beats"
             variant="outlined"
@@ -116,7 +120,7 @@ class Controls extends React.Component {
           </Grid>
           <Grid item>
             <Grid container spacing={2}>
-              <Grid item>
+              {/* <Grid item>
                 <Grid container direction={"column"} spacing={2}>
                   <Grid item>
                     <img src={Buzz} className={classes.icon} />
@@ -132,7 +136,7 @@ class Controls extends React.Component {
                     </div>
                   </Grid>
                 </Grid>
-              </Grid>
+              </Grid> */}
               <Grid item>
                 <Grid container direction={"column"} spacing={2}>
                   <Grid item>

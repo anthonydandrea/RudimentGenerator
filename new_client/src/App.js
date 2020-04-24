@@ -7,6 +7,7 @@ import AppBar from "./AppBar";
 import Controls from "./Controls";
 import axios from "axios";
 import Grid from "@material-ui/core/Grid";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const styles = {
   gridRoot: {
@@ -25,10 +26,20 @@ class App extends React.Component {
   }
 
   generateRudiment = (state) => {
+    this.setState({
+      loading: true,
+    });
+
     axios
       .get("/rudiment", {
         params: {
           beats: state.numBeats,
+          accents: state.accents,
+          rights: state.rights,
+          buzzes: state.buzzes,
+          diddles: state.diddles,
+          flams: state.flams,
+          cheeses: state.cheeses,
           oldFileName: this.state.filename,
         },
       })
@@ -36,12 +47,20 @@ class App extends React.Component {
         console.log(response);
         this.setState({
           file: "/rudiments/" + response.data,
+          // file: "" + Math.random() + ".pdf",
           filename: response.data,
         });
       })
       .catch(function (error) {
         console.log(error);
+        this.setState({
+          loading: false,
+        });
       });
+  };
+
+  onLoadError = (error) => {
+    this.setState({ loading: false }, () => alert(error.message));
   };
 
   render() {
@@ -57,20 +76,31 @@ class App extends React.Component {
             root: classes.gridRoot,
           }}
         >
-          <Grid item xs={4}>
-            <Controls generateRudiment={this.generateRudiment} />
+          <Grid item xs={2}>
+            <Grid container orientation="vertical">
+              <Grid item>
+                <Controls generateRudiment={this.generateRudiment} />
+              </Grid>
+              <Grid item>
+                {this.state.loading ? <CircularProgress /> : null}
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={10}>
             <div>
               <div
                 style={{
                   width: "fit-content",
                   height: 500,
-                  //   overflowY: "auto",
                   margin: "0 auto",
                 }}
               >
-                <Document file={this.state.file} noData={""}>
+                <Document
+                  file={this.state.file}
+                  noData={""}
+                  onLoadError={this.onLoadError}
+                  onLoadSuccess={() => this.setState({ loading: false })}
+                >
                   <Page pageNumber={1} scale={1.5} />
                 </Document>
               </div>

@@ -1,21 +1,27 @@
+from note_enum import NoteEnum
+from generator import Generator
+import random as rd
+import json
+import argparse
 import inflect
 inf = inflect.engine()
 
-import argparse
-import json
-import random as rd
-
-from generator import Generator
-from note_enum import NoteEnum
 
 parser = argparse.ArgumentParser(description='Generate a drum rudiment')
-parser.add_argument('--numBeats', help='sum the integers (default: find the max)')
+
+parser.add_argument('--beats', help='sum the integers (default: find the max)')
+parser.add_argument('--accents')
+parser.add_argument('--rights')
+parser.add_argument('--buzzes')
+parser.add_argument('--flams')
+parser.add_argument('--diddles')
+parser.add_argument('--cheeses')
 
 args = parser.parse_args()
 # print(args.numBeats)
 NUM_BEATS = None
 try:
-    NUM_BEATS = int(args.numBeats)
+    NUM_BEATS = min(max(int(args.beats), 1), 32)
 except:
     NUM_BEATS = 1
 
@@ -29,13 +35,16 @@ with open("nouns.txt", "r") as nouns_file:
     for line in nouns_file.readlines():
         nouns.append(line[:-1])
 
+
 def get_noun():
     noun = nouns[rd.randint(0, len(nouns)-1)]
     return noun[0].upper() + noun[1:]
 
+
 def get_adjective():
-    adj = adjs[rd.randint(0,len(adjs)-1)]
+    adj = adjs[rd.randint(0, len(adjs)-1)]
     return adj[0].upper() + adj[1:]
+
 
 def get_title():
     plural = inf.plural(get_noun())
@@ -52,29 +61,32 @@ def get_title():
     else:
         return get_adjective() + " " + get_noun() + " " + plural
 
+
 notation_dict = dict()
 
 for i in (NoteEnum.TAP, NoteEnum.ACCENT):
     for j in (NoteEnum.PLAIN, NoteEnum.FLAM, NoteEnum.DIDDLE, NoteEnum.CHEESE):
         for k in (NoteEnum.RIGHT, NoteEnum.LEFT):
-            dict_key = str(i) + str(j) + str(k) #""+str(i)+str(j)+str(k)
+            dict_key = str(i) + str(j) + str(k)  # ""+str(i)+str(j)+str(k)
             dict_val = "XX"
             # do stuff
 
-            if j == NoteEnum.FLAM or j == NoteEnum.CHEESE: dict_val = "\\grace c''8" + " " + dict_val
-            if j == NoteEnum.DIDDLE or j == NoteEnum.CHEESE: dict_val = dict_val + ":TT"
+            if j == NoteEnum.FLAM or j == NoteEnum.CHEESE:
+                dict_val = "\\grace c''8" + " " + dict_val
+            if j == NoteEnum.DIDDLE or j == NoteEnum.CHEESE:
+                dict_val = dict_val + ":TT"
 
-
-
-            if i == NoteEnum.ACCENT: dict_val = dict_val + "->"
-
-            if k == NoteEnum.RIGHT: dict_val = dict_val + "-\"r\""
-            else: dict_val = dict_val + "-\"l\""
+            if i == NoteEnum.ACCENT:
+                dict_val = dict_val + "->"
+            if k == NoteEnum.RIGHT:
+                dict_val = dict_val + "-\"r\""
+            else:
+                dict_val = dict_val + "-\"l\""
 
             notation_dict[dict_key] = " " + dict_val + " "
 
 
-g = Generator()
+g = Generator(args)
 music_staff = ""
 
 for beat in g.get_n_beats(NUM_BEATS):
@@ -82,7 +94,7 @@ for beat in g.get_n_beats(NUM_BEATS):
     is_odd_rhythm = num_notes % 2 == 1
 
     if is_odd_rhythm:
-        music_staff += " \\tuplet "+ str(num_notes) + "/2 { "
+        music_staff += " \\tuplet " + str(num_notes) + "/2 { "
 
     for idx, note in enumerate(beat):
         # print(note)
@@ -107,7 +119,6 @@ for beat in g.get_n_beats(NUM_BEATS):
 
     if is_odd_rhythm:
         music_staff += " } "
-
 
 
 staff = "{\n\\new PianoStaff << \n"
