@@ -57,10 +57,10 @@ class App extends React.Component {
             root: classes.gridRoot,
           }}
         >
-          <Grid item xs={2}>
+          <Grid item xs={4}>
             <Controls generateRudiment={this.generateRudiment} />
           </Grid>
-          <Grid item xs={10}>
+          <Grid item xs={8}>
             <div>
               <div
                 style={{

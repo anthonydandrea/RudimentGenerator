@@ -1,76 +1,80 @@
 package main
 
 import (
-        "fmt"
-        "regexp"
-        "os/exec"
-        "net/http"
-        "math/rand"
-        "strconv"
-        "os"
+	"fmt"
+	"math/rand"
+	"net/http"
+	"os"
+	"os/exec"
+	"regexp"
+	"strconv"
 )
 
 type RudimentOptions struct {
-        numBeats int
-
+	numBeats int
 }
 
 func getRudimentOptionsCLIString(options RudimentOptions) string {
-        return "--numBeats " + strconv.Itoa(options.numBeats)
+	return "--numBeats " + strconv.Itoa(options.numBeats)
 }
 
 func getRudiment(w http.ResponseWriter, r *http.Request) {
 
-        if r.Method != "GET" {
-                return
-        }
+	if r.Method != "GET" {
+		return
+	}
 
-        var options RudimentOptions
-        var err error
-        var fileToDelete string
+	var options RudimentOptions
+	var err error
+	var fileToDelete string
 
-        for k, v := range r.URL.Query() {
-                fmt.Printf("%s: %s\n", k, v)
-                switch k {
-                case "beats": 
-                        options.numBeats, err = strconv.Atoi(v[0])
-                        fmt.Println(err)
-                case "oldFileName":
-                        fileToDelete = v[0]
-                }
-            }
+	for k, v := range r.URL.Query() {
+		fmt.Printf("%s: %s\n", k, v)
+		switch k {
+		case "beats":
+			options.numBeats, err = strconv.Atoi(v[0])
+			fmt.Println(err)
+		case "oldFileName":
+			fileToDelete = v[0]
+		}
+	}
 
-                fileprefix := fmt.Sprintf("%f", rand.Float64())
-                fileoptions := getRudimentOptionsCLIString(options)
-                fmt.Println(fileprefix + " " + fileoptions)
+	fileprefix := fmt.Sprintf("%f", rand.Float64())
+	fileoptions := getRudimentOptionsCLIString(options)
+	fmt.Println(fileprefix + " " + fileoptions)
 
-                out := exec.Command("./generate_rudiment.sh", fileprefix, fileoptions).Run()
-                
-                if out != nil {
-                        fmt.Printf("%s", out)
-                    }
+	out := exec.Command("./generate_rudiment.sh", fileprefix, fileoptions).Run()
 
-                fmt.Fprintf(w, fileprefix+".pdf")
+	if out != nil {
+		fmt.Printf("%s", out)
+	}
 
-                fmt.Println("remove static/rudiments/"+fileToDelete)
-                match, _ := regexp.MatchString("^0.[0-9]*.pdf", fileToDelete)
-                if !match {
-                        fmt.Println("Bad string input")
-                } else {
-                        exec.Command("rm", "static/rudiments/"+fileToDelete).Run()
-                }
-                
-    }
+	fmt.Fprintf(w, fileprefix+".pdf")
+
+	fmt.Println("remove static/rudiments/" + fileToDelete)
+	match, _ := regexp.MatchString("^0.[0-9]*.pdf", fileToDelete)
+	if !match {
+		fmt.Println("Bad string input")
+	} else {
+		exec.Command("rm", "static/rudiments/"+fileToDelete).Run()
+	}
+
+}
 
 func main() {
-        http.Handle("/", http.FileServer(http.Dir("./static")))
-        http.HandleFunc("/rudiment", getRudiment)
+	path, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(path)
+	http.Handle("/", http.FileServer(http.Dir("./static")))
+	http.HandleFunc("/rudiment", getRudiment)
 
-        port, exists := os.LookupEnv("PORT")
-        if exists {
-                http.ListenAndServe(":"+port, nil)
-           } else {
-                http.ListenAndServe(":3001", nil)
-           }
-        
+	port, exists := os.LookupEnv("PORT")
+	if exists {
+		http.ListenAndServe(":"+port, nil)
+	} else {
+		http.ListenAndServe(":3001", nil)
+	}
+
 }
