@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
+  appBar: {}
 }));
 
 export default function ButtonAppBar() {

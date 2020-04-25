@@ -18,16 +18,34 @@ type RudimentOptions struct {
 	diddles int
 	flams   int
 	cheeses int
+
+	triplets   bool
+	sixteenths bool
+	fivelets   bool
 }
 
 func getRudimentOptionsCLIString(options RudimentOptions) string {
-	return " --beats " + strconv.Itoa(options.beats) +
+	cli_str := " --beats " + strconv.Itoa(options.beats) +
 		" --accents " + strconv.Itoa(options.accents) +
 		" --rights " + strconv.Itoa(options.rights) +
 		" --buzzes " + strconv.Itoa(options.buzzes) +
 		" --diddles " + strconv.Itoa(options.diddles) +
 		" --flams " + strconv.Itoa(options.flams) +
 		" --cheeses " + strconv.Itoa(options.cheeses)
+
+	if options.triplets {
+		cli_str += " --triplets "
+	}
+
+	if options.sixteenths {
+		cli_str += " --sixteenths "
+	}
+
+	if options.fivelets {
+		cli_str += " --fivelets "
+	}
+
+	return cli_str
 }
 
 func getRudiment(w http.ResponseWriter, r *http.Request) {
@@ -63,6 +81,15 @@ func getRudiment(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 		case "cheeses":
 			options.cheeses, err = strconv.Atoi(v[0])
+			fmt.Println(err)
+		case "triplets":
+			options.triplets, err = strconv.ParseBool(v[0])
+			fmt.Println(err)
+		case "sixteenths":
+			options.sixteenths, err = strconv.ParseBool(v[0])
+			fmt.Println(err)
+		case "fivelets":
+			options.fivelets, err = strconv.ParseBool(v[0])
 			fmt.Println(err)
 		case "oldFileName":
 			fileToDelete = v[0]

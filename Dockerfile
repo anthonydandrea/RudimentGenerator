@@ -25,4 +25,5 @@ RUN (crontab -l ; echo "0 */6 * * * rm static/rudiments/ >> /var/log/cron.log") 
 ADD docker_start.sh /
 RUN chmod +x /docker_start.sh
 
-CMD ["./docker_start.sh"]
+# CMD ["./docker_start.sh"]
+CMD ["go", "run", "server/src/server.go"]

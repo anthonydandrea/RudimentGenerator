@@ -40,6 +40,9 @@ class App extends React.Component {
           diddles: state.diddles,
           flams: state.flams,
           cheeses: state.cheeses,
+          triplets: state.triplets,
+          sixteenths: state.sixteenths,
+          fivelets: state.fivelets,
           oldFileName: this.state.filename,
         },
       })
@@ -76,7 +79,7 @@ class App extends React.Component {
             root: classes.gridRoot,
           }}
         >
-          <Grid item xs={2}>
+          <Grid item xs={12} sm={5} md={4} lg={3}>
             <Grid container orientation="vertical">
               <Grid item>
                 <Controls generateRudiment={this.generateRudiment} />
@@ -86,7 +89,7 @@ class App extends React.Component {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={10}>
+          <Grid item xs={12} sm={7} md={8} lg={9}>
             <div>
               <div
                 style={{
@@ -101,7 +104,7 @@ class App extends React.Component {
                   onLoadError={this.onLoadError}
                   onLoadSuccess={() => this.setState({ loading: false })}
                 >
-                  <Page pageNumber={1} scale={1.5} />
+                  <Page pageNumber={1} scale={1.85} />
                 </Document>
               </div>
             </div>

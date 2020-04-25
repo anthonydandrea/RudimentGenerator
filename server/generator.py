@@ -11,10 +11,16 @@ class Generator:
         #     "special": [(NoteEnum.PLAIN, 0.45), (NoteEnum.FLAM, 0.25), (NoteEnum.DIDDLE, 0.15), (NoteEnum.CHEESE, 0.15)],
         #     "sticking": [(NoteEnum.RIGHT, 0.5), (NoteEnum.LEFT, 0.5)]
         # }
-        self.weights = {
-            # "special": [(NoteEnum.PLAIN, 0.45), (NoteEnum.FLAM, 0.25), (NoteEnum.DIDDLE, 0.15), (NoteEnum.CHEESE, 0.15)]
-        }
+        self.weights = dict()
         self.init_weights()
+        self.sanitize_note_types()
+
+    def sanitize_note_types(self):
+        note_types = ()
+        if not self.args.triplets and not self.args.sixteenths and not self.args.fivelets:
+            self.args.triplets = True
+            self.args.sixteenths = True
+            self.args.fivelets = True
 
     def init_weights(self):
         # print(self.args)
@@ -80,10 +86,25 @@ class Generator:
 
         return beats
 
+    def _generate_beat_notes(self):
+        note_map = {
+            3: "triplets",
+            4: "sixteenths",
+            5: "fivelets"
+        }
+
+        rand = None
+        while not rand or not getattr(self.args, note_map[rand]):
+            rand = rd.randint(3, 5)
+
+        arr = []
+        for _ in range(rand):
+            arr.append(Note())
+
+        return arr
+
     def get_beat(self, prev_beat_last_note):
-        notes = []
-        for _ in range(rd.randint(3, 5)):
-            notes.append(Note())
+        notes = self._generate_beat_notes()
 
         for idx, note in enumerate(notes):
             prev_note = None

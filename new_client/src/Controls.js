@@ -6,11 +6,17 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
 import Grid from "@material-ui/core/Grid";
 import Slider from "@material-ui/core/Slider";
 import VolumeDown from "@material-ui/icons/VolumeDown";
 import VolumeUp from "@material-ui/icons/VolumeUp";
 
+import Triplets from "./icons/triplets.png";
+import Sixteenths from "./icons/sixteenths.png";
+import Fivelets from "./icons/fivelets.png";
 import Accent from "./icons/accent.png";
 import Buzz from "./icons/buzz.png";
 import Diddle from "./icons/diddle.png";
@@ -38,20 +44,27 @@ const styles = {
     display: "inline",
     margin: "0px 10px",
   },
+  noteTypeImage: {
+    width: 60,
+    height: 50,
+  },
 };
 
 class Controls extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      numBeats: 1,
+      numBeats: 8,
       numBeatsError: false,
       accents: 30,
       rights: 50,
       buzzes: 50,
-      diddles: 50,
-      flams: 50,
-      cheeses: 50,
+      diddles: 40,
+      flams: 30,
+      cheeses: 20,
+      triplets: true,
+      sixteenths: true,
+      fivelets: true,
     };
   }
 
@@ -65,6 +78,15 @@ class Controls extends React.Component {
 
   handleChange = (type) => (e, newVal) => {
     this.setState({ [type]: newVal });
+  };
+
+  handleCheckboxChange = (event) => {
+    this.setState({ [event.target.name]: event.target.checked });
+  };
+
+  isGenerateDisabled = () => {
+    const { triplets, sixteenths, fivelets } = this.state;
+    return !triplets && !sixteenths && !fivelets;
   };
 
   render() {
@@ -94,29 +116,86 @@ class Controls extends React.Component {
         </FormControl>
         <Grid container direction={"column"} spacing={1}>
           <Grid item>
-            <Typography
-              style={{ opacity: 0 }}
-              className={classes.stickingTypog}
-            >
-              _
-            </Typography>
-            <Slider
-              classes={{ root: classes.horizontalSliderRoot }}
-              value={this.state.accents}
-              onChange={this.handleChange("accents")}
-              aria-labelledby="continuous-slider"
-            />
-            <img src={Accent} className={classes.icon} />
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={this.state.triplets}
+                    onChange={this.handleCheckboxChange}
+                    name="triplets"
+                    color="secondary"
+                  />
+                }
+                label={<img src={Triplets} className={classes.noteTypeImage} />}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={this.state.sixteenths}
+                    onChange={this.handleCheckboxChange}
+                    name="sixteenths"
+                    color="secondary"
+                  />
+                }
+                label={
+                  <img src={Sixteenths} className={classes.noteTypeImage} />
+                }
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={this.state.fivelets}
+                    onChange={this.handleCheckboxChange}
+                    name="fivelets"
+                    color="secondary"
+                  />
+                }
+                label={<img src={Fivelets} className={classes.noteTypeImage} />}
+              />
+            </FormGroup>
           </Grid>
           <Grid item>
-            <Typography className={classes.stickingTypog}>L</Typography>
-            <Slider
-              classes={{ root: classes.horizontalSliderRoot }}
-              value={this.state.rights}
-              onChange={this.handleChange("rights")}
-              aria-labelledby="continuous-slider"
-            />
-            <Typography className={classes.stickingTypog}>R</Typography>
+            <Grid container>
+              <Grid item>
+                <Typography
+                  style={{ opacity: 0 }}
+                  className={classes.stickingTypog}
+                >
+                  _
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Slider
+                  classes={{ root: classes.horizontalSliderRoot }}
+                  value={this.state.accents}
+                  onChange={this.handleChange("accents")}
+                  aria-labelledby="continuous-slider"
+                />
+              </Grid>
+
+              <Grid item>
+                <img src={Accent} className={classes.icon} />
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item>
+            <Grid container>
+              <Grid item>
+                <Typography className={classes.stickingTypog}>L</Typography>
+              </Grid>
+              <Grid item>
+                <Slider
+                  classes={{ root: classes.horizontalSliderRoot }}
+                  value={this.state.rights}
+                  onChange={this.handleChange("rights")}
+                  aria-labelledby="continuous-slider"
+                />
+              </Grid>
+              <Grid item>
+                <Typography className={classes.stickingTypog}>R</Typography>
+              </Grid>
+            </Grid>
           </Grid>
           <Grid item>
             <Grid container spacing={2}>
@@ -196,6 +275,7 @@ class Controls extends React.Component {
               variant="contained"
               color="primary"
               onClick={this.generateRudimentButtonClicked}
+              disabled={this.isGenerateDisabled()}
             >
               Generate
             </Button>
